@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: medflow-backend
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5433/medflow
+    username: medflow_user
+    password: medflow_password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+    show-sql: false
+  
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  
+  redis:
+    host: localhost
+    port: 6379
+    password: 
+    timeout: 5000ms
+  
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: medflow@email.com
+    password: your_password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  error:
+    include-message: always
+    include-binding-errors: always
+
+jwt:
+  secret: medflowSecretKey123456789012345678901234567890
+  expiration: 86400000
+  refresh-expiration: 604800000
+
+logging:
+  level:
+    com.medflow: DEBUG
+    org.springframework.security: INFO
+    org.hibernate: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  info:
+    env:
+      enabled: true

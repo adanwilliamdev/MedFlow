@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: medflow-postgres
+    environment:
+      POSTGRES_DB: medflow
+      POSTGRES_USER: medflow_user
+      POSTGRES_PASSWORD: medflow_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - medflow-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: medflow-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - medflow-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: medflow-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - medflow-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  medflow-network:
+    driver: bridge
