@@ -29,30 +29,6 @@ spring:
     enabled: true
     baseline-on-migrate: true
     locations: classpath:db/migration
-  
-  redis:
-    host: localhost
-    port: 6379
-    password: 
-    timeout: 5000ms
-  
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-  
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: medflow@email.com
-    password: your_password
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
 
 server:
   port: 8080
