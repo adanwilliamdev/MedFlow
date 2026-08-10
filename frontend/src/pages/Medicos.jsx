@@ -138,8 +138,13 @@ export default function Medicos() {
           rowKey={(m) => m.id}
           loading={loading}
           emptyIcon="doctors"
-          emptyTitle="Nenhum médico cadastrado"
-          emptyMessage="Cadastre o primeiro médico da equipe."
+          emptyTitle={busca ? 'Nenhum médico encontrado' : 'Sua clínica ainda não tem médicos'}
+          emptyMessage={busca ? 'Tente buscar por outro nome.' : 'Cadastre o primeiro para começar a montar sua equipe.'}
+          emptyAction={!busca && (
+            <button className="btn btn-primary" onClick={abrirNovo}>
+              <Icon name="plus" size={16} /> Cadastrar médico
+            </button>
+          )}
         />
       </div>
 

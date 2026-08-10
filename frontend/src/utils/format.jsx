@@ -51,14 +51,14 @@ export function paymentBadge(pago) {
 // Hex equivalents of the CSS tokens, for use inside SVG/canvas chart libraries
 // (recharts) where CSS custom properties aren't reliably resolved.
 export const CHART_COLORS = {
-  primary: '#0F6E64',
-  primaryDark: '#0A4F48',
-  green: '#187A54',
-  amber: '#A66A0A',
-  red: '#B23A3A',
-  blue: '#2563A8',
-  purple: '#6B4FBB',
-  gray: '#8A9B9E',
+  primary: '#2C7BE5',
+  primaryDark: '#1A5BBF',
+  green: '#10B981',
+  amber: '#B45309',
+  red: '#DC2626',
+  blue: '#2C7BE5',
+  purple: '#8B5CF6',
+  gray: '#94A3B8',
 }
 
 export function toDateTimeLocalInput(value) {

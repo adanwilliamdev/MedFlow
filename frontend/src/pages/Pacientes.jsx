@@ -140,8 +140,13 @@ export default function Pacientes() {
           rowKey={(p) => p.id}
           loading={loading}
           emptyIcon="patients"
-          emptyTitle="Nenhum paciente encontrado"
-          emptyMessage="Cadastre o primeiro paciente da clínica."
+          emptyTitle={busca ? 'Nenhum paciente encontrado' : 'Sua clínica ainda não tem pacientes'}
+          emptyMessage={busca ? 'Tente buscar por outro nome.' : 'Cadastre o primeiro para começar a gerenciar os atendimentos.'}
+          emptyAction={!busca && (
+            <button className="btn btn-primary" onClick={abrirNovo}>
+              <Icon name="plus" size={16} /> Cadastrar paciente
+            </button>
+          )}
         />
       </div>
 

@@ -89,10 +89,10 @@ export default function Financeiro() {
   return (
     <div>
       <div className="stat-grid">
-        <StatCard icon="finance" label="Faturamento do mês" value={formatCurrency(resumo?.faturamentoMes)} />
-        <StatCard icon="clock" label="A receber no mês" value={formatCurrency(resumo?.faturamentoPendente)} />
-        <StatCard icon="finance" label="Total recebido (geral)" value={formatCurrency(totalPago)} />
-        <StatCard icon="clip" label="Total pendente (geral)" value={formatCurrency(totalPendente)} />
+        <StatCard icon="finance" label="Faturamento do mês" value={formatCurrency(resumo?.faturamentoMes)} variant="green" />
+        <StatCard icon="clock" label="A receber no mês" value={formatCurrency(resumo?.faturamentoPendente)} variant="amber" />
+        <StatCard icon="finance" label="Total recebido (geral)" value={formatCurrency(totalPago)} variant="green" />
+        <StatCard icon="clip" label="Total pendente (geral)" value={formatCurrency(totalPendente)} variant="red" />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
@@ -107,10 +107,10 @@ export default function Financeiro() {
             ) : (
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={monthlyData} margin={{ top: 4, right: 8, left: -12, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E1E9E8" />
-                  <XAxis dataKey="mes" tick={{ fontSize: 12, fill: '#5B6E72' }} axisLine={{ stroke: '#E1E9E8' }} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: '#5B6E72' }} axisLine={false} tickLine={false} tickFormatter={(v) => `R$${Math.round(v / 100) / 10}k`} />
-                  <Tooltip formatter={(v) => formatCurrency(v)} contentStyle={{ borderRadius: 10, border: '1px solid #E1E9E8', fontSize: 13 }} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                  <XAxis dataKey="mes" tick={{ fontSize: 12, fill: '#64748B' }} axisLine={{ stroke: '#E2E8F0' }} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} tickFormatter={(v) => `R$${Math.round(v / 100) / 10}k`} />
+                  <Tooltip formatter={(v) => formatCurrency(v)} contentStyle={{ borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13 }} />
                   <Bar dataKey="total" fill={CHART_COLORS.primary} radius={[6, 6, 0, 0]} maxBarSize={40} />
                 </BarChart>
               </ResponsiveContainer>
@@ -132,7 +132,7 @@ export default function Financeiro() {
                   <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={52} outerRadius={80} paddingAngle={2}>
                     {pieData.map((d) => <Cell key={d.name} fill={d.color} />)}
                   </Pie>
-                  <Tooltip formatter={(v) => formatCurrency(v)} contentStyle={{ borderRadius: 10, border: '1px solid #E1E9E8', fontSize: 13 }} />
+                  <Tooltip formatter={(v) => formatCurrency(v)} contentStyle={{ borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13 }} />
                   <Legend iconType="circle" wrapperStyle={{ fontSize: 12.5 }} />
                 </PieChart>
               </ResponsiveContainer>

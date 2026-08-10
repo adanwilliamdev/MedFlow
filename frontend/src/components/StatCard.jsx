@@ -1,8 +1,8 @@
 import Icon from './Icon'
 
-export default function StatCard({ icon, label, value, trend }) {
+export default function StatCard({ icon, label, value, trend, variant }) {
   return (
-    <div className="card stat-card">
+    <div className={`card stat-card ${variant ? `stat-${variant}` : ''}`}>
       <div className="stat-card-top">
         <div className="stat-label">{label}</div>
         {icon && (

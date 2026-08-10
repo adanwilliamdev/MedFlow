@@ -80,12 +80,12 @@ export default function Dashboard() {
   return (
     <div>
       <div className="stat-grid">
-        <StatCard icon="patients" label="Pacientes cadastrados" value={resumo.totalPacientes} />
-        <StatCard icon="doctors" label="Médicos ativos" value={resumo.totalMedicos} />
-        <StatCard icon="agenda" label="Consultas hoje" value={resumo.consultasHoje} />
-        <StatCard icon="clock" label="Consultas (7 dias)" value={resumo.consultasSemana} />
-        <StatCard icon="finance" label="Faturamento do mês" value={formatCurrency(resumo.faturamentoMes)} />
-        <StatCard icon="clip" label="A receber no mês" value={formatCurrency(resumo.faturamentoPendente)} />
+        <StatCard icon="patients" label="Pacientes cadastrados" value={resumo.totalPacientes} variant="blue" />
+        <StatCard icon="doctors" label="Médicos ativos" value={resumo.totalMedicos} variant="green" />
+        <StatCard icon="agenda" label="Consultas hoje" value={resumo.consultasHoje} variant="amber" />
+        <StatCard icon="clock" label="Consultas (7 dias)" value={resumo.consultasSemana} variant="amber" />
+        <StatCard icon="finance" label="Faturamento do mês" value={formatCurrency(resumo.faturamentoMes)} variant="purple" />
+        <StatCard icon="clip" label="A receber no mês" value={formatCurrency(resumo.faturamentoPendente)} variant="purple" />
       </div>
 
       <div className="card" style={{ marginBottom: 20 }}>
@@ -101,12 +101,12 @@ export default function Dashboard() {
           ) : (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={chartData} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E1E9E8" />
-                <XAxis dataKey="dia" tick={{ fontSize: 12, fill: '#5B6E72' }} axisLine={{ stroke: '#E1E9E8' }} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#5B6E72' }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                <XAxis dataKey="dia" tick={{ fontSize: 12, fill: '#64748B' }} axisLine={{ stroke: '#E2E8F0' }} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#64748B' }} axisLine={false} tickLine={false} />
                 <Tooltip
                   cursor={{ fill: 'rgba(15,110,100,0.06)' }}
-                  contentStyle={{ borderRadius: 10, border: '1px solid #E1E9E8', fontSize: 13 }}
+                  contentStyle={{ borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13 }}
                 />
                 <Bar dataKey="consultas" fill={CHART_COLORS.primary} radius={[6, 6, 0, 0]} maxBarSize={36} />
               </BarChart>

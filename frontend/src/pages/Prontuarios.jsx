@@ -40,6 +40,7 @@ export default function Prontuarios() {
   const [modalOpen, setModalOpen] = useState(false)
   const [tab, setTab] = useState('anamnese')
   const [busca, setBusca] = useState('')
+  const [buscaPaciente, setBuscaPaciente] = useState('')
   // Attachments are simulated client-side (no backend endpoint exists yet for files),
   // keyed by patient id, so switching patients keeps each patient's local list.
   const [attachmentsByPatient, setAttachmentsByPatient] = useState({})
@@ -116,6 +117,18 @@ export default function Prontuarios() {
   const pacienteSelecionado = pacientes.find((p) => String(p.id) === String(pacienteId))
   const attachments = attachmentsByPatient[pacienteId] || []
 
+  function iniciais(nome) {
+    if (!nome) return '?'
+    const parts = nome.trim().split(/\s+/)
+    return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase()
+  }
+
+  const pacientesFiltrados = useMemo(() => {
+    if (!buscaPaciente.trim()) return pacientes
+    const q = buscaPaciente.trim().toLowerCase()
+    return pacientes.filter((p) => p.nome?.toLowerCase().includes(q))
+  }, [pacientes, buscaPaciente])
+
   const registrosFiltrados = useMemo(() => {
     if (!busca.trim()) return registros
     const q = busca.trim().toLowerCase()
@@ -128,126 +141,149 @@ export default function Prontuarios() {
   }, [registros, busca])
 
   return (
-    <div>
-      <div className="card card-pad" style={{ marginBottom: 20 }}>
-        <div className="field" style={{ marginBottom: 0, maxWidth: 420 }}>
-          <label htmlFor="pront-paciente">Selecione o paciente</label>
-          <select id="pront-paciente" className="input" value={pacienteId} onChange={(e) => handleSelecionarPaciente(e.target.value)}>
-            <option value="">Escolha um paciente para ver o prontuário</option>
-            {pacientes.map((p) => <option key={p.id} value={p.id}>{p.nome}</option>)}
-          </select>
+    <div className="prontuario-layout">
+      {/* Coluna esquerda (30%): lista de pacientes com avatar e busca */}
+      <aside className="card prontuario-sidebar">
+        <div className="prontuario-sidebar-search">
+          <SearchBox value={buscaPaciente} onChange={setBuscaPaciente} placeholder="Buscar paciente..." />
         </div>
-      </div>
-
-      {!pacienteId && (
-        <div className="card">
-          <div className="empty-state">
-            <Icon name="records" size={30} className="empty-icon" />
-            <strong>Nenhum paciente selecionado</strong>
-            <span>Escolha um paciente acima para visualizar ou registrar informações do prontuário.</span>
-          </div>
-        </div>
-      )}
-
-      {pacienteId && (
-        <>
-          <div className="toolbar">
-            <div className="toolbar-left">
-              <strong style={{ fontFamily: 'var(--font-display)', fontSize: 17 }}>Histórico de {pacienteSelecionado?.nome}</strong>
-            </div>
-            <button className="btn btn-primary" onClick={() => setModalOpen(true)}>
-              <Icon name="plus" size={16} /> Novo registro
-            </button>
-          </div>
-
-          <div className="tabs">
-            {TABS.map((t) => (
-              <button key={t.key} className={`tab-btn ${tab === t.key ? 'active' : ''}`} onClick={() => setTab(t.key)}>
-                <Icon name={t.icon} size={15} /> {t.label}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ marginBottom: 16 }}>
-            <SearchBox value={busca} onChange={setBusca} placeholder="Buscar por data ou sintoma..." style={{ maxWidth: 360 }} />
-          </div>
-
-          {tab === 'exames' && (
-            <div className="card card-pad" style={{ marginBottom: 20 }}>
-              <h3 style={{ fontSize: 14, marginBottom: 10 }}>Anexos de exames</h3>
-              <div className="attachment-drop" onClick={() => fileInputRef.current?.click()}>
-                <Icon name="clip" size={20} style={{ margin: '0 auto 6px' }} />
-                Clique para anexar exames (PDF ou imagem)
-              </div>
-              <input ref={fileInputRef} type="file" accept="application/pdf,image/*" multiple hidden onChange={handleFilesSelected} />
-              {attachments.length > 0 && (
-                <div className="attachment-list">
-                  {attachments.map((a) => (
-                    <div className="attachment-item" key={a.id}>
-                      <Icon name="file" size={15} />
-                      <span className="name">{a.name}</span>
-                      <span className="cell-muted" style={{ fontSize: 11.5 }}>{(a.size / 1024).toFixed(0)} KB</span>
-                      <button onClick={() => removeAttachment(a.id)} aria-label={`Remover ${a.name}`}>
-                        <Icon name="close" size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <p className="cell-muted" style={{ fontSize: 12, marginTop: 10, marginBottom: 0 }}>
-                Anexos ficam salvos apenas nesta sessão (recurso de demonstração).
-              </p>
-            </div>
-          )}
-
-          {error && <div className="alert alert-error"><Icon name="alertTriangle" size={16} />{error}</div>}
-
-          {loading ? (
-            <CardSkeleton lines={4} />
-          ) : registrosFiltrados.length === 0 ? (
-            <div className="card">
-              <div className="empty-state">
-                <Icon name="records" size={30} className="empty-icon" />
-                <strong>Nada por aqui ainda</strong>
-                <span>{busca ? 'Nenhum registro corresponde à busca.' : 'Nenhum registro de prontuário para este paciente ainda.'}</span>
-              </div>
+        <div className="prontuario-patient-list">
+          {pacientesFiltrados.length === 0 ? (
+            <div className="empty-state" style={{ padding: '32px 16px' }}>
+              <Icon name="patients" size={32} className="empty-icon" />
+              <span style={{ fontSize: 13 }}>Nenhum paciente encontrado.</span>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {registrosFiltrados.map((r) => (
-                <div key={r.id} className="card card-pad">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, alignItems: 'center' }}>
-                    <strong>{formatDateTime(r.dataRegistro)}</strong>
-                    {r.medicoNome && <span className="badge badge-blue">Dr(a). {r.medicoNome}</span>}
-                  </div>
-                  {tab === 'anamnese' && (
-                    <>
-                      <Field label="Queixa principal" value={r.queixaPrincipal} />
-                      <Field label="Histórico" value={r.historico} />
-                      <Field label="Exame físico" value={r.exameFisico} />
-                      <Field label="Diagnóstico" value={r.diagnostico} />
-                      <Field label="Observações" value={r.observacoes} />
-                      {!r.queixaPrincipal && !r.historico && !r.exameFisico && !r.diagnostico && !r.observacoes && (
-                        <p className="cell-muted" style={{ margin: 0 }}>Sem dados de anamnese neste registro.</p>
-                      )}
-                    </>
-                  )}
-                  {tab === 'exames' && (
-                    r.examesSolicitados
-                      ? <Field label="Exames solicitados" value={r.examesSolicitados} />
-                      : <p className="cell-muted" style={{ margin: 0 }}>Nenhum exame solicitado neste registro.</p>
-                  )}
-                  {tab === 'prescricoes' && (
-                    r.prescricao
-                      ? <Field label="Prescrição" value={r.prescricao} />
-                      : <p className="cell-muted" style={{ margin: 0 }}>Nenhuma prescrição neste registro.</p>
-                  )}
+            pacientesFiltrados.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className={`prontuario-patient-item ${String(p.id) === String(pacienteId) ? 'active' : ''}`}
+                onClick={() => handleSelecionarPaciente(p.id)}
+              >
+                <div className="prontuario-patient-avatar">{iniciais(p.nome)}</div>
+                <div className="prontuario-patient-info">
+                  <strong>{p.nome}</strong>
+                  <span>{p.celular || p.telefone || 'Sem contato'}</span>
                 </div>
+              </button>
+            ))
+          )}
+        </div>
+      </aside>
+
+      {/* Coluna direita (70%): prontuário do paciente selecionado */}
+      <div>
+        {!pacienteId && (
+          <div className="card">
+            <div className="empty-state">
+              <Icon name="records" size={40} className="empty-icon" />
+              <strong>Nenhum paciente selecionado</strong>
+              <span>Escolha um paciente à esquerda para visualizar ou registrar informações do prontuário.</span>
+            </div>
+          </div>
+        )}
+
+        {pacienteId && (
+          <>
+            <div className="toolbar">
+              <div className="toolbar-left">
+                <span className="prontuario-main-title">Prontuário de {pacienteSelecionado?.nome}</span>
+              </div>
+              <button className="btn btn-primary" onClick={() => setModalOpen(true)}>
+                <Icon name="plus" size={16} /> Novo registro
+              </button>
+            </div>
+
+            <div className="tabs">
+              {TABS.map((t) => (
+                <button key={t.key} className={`tab-btn ${tab === t.key ? 'active' : ''}`} onClick={() => setTab(t.key)}>
+                  <Icon name={t.icon} size={15} /> {t.label}
+                </button>
               ))}
             </div>
-          )}
-        </>
-      )}
+
+            <div style={{ marginBottom: 16 }}>
+              <SearchBox value={busca} onChange={setBusca} placeholder="Buscar por data ou sintoma..." style={{ maxWidth: 360 }} />
+            </div>
+
+            {tab === 'exames' && (
+              <div className="card card-pad" style={{ marginBottom: 20 }}>
+                <h3 style={{ fontSize: 14, marginBottom: 10 }}>Anexos de exames</h3>
+                <div className="attachment-drop" onClick={() => fileInputRef.current?.click()}>
+                  <Icon name="clip" size={20} style={{ margin: '0 auto 6px' }} />
+                  Clique para anexar exames (PDF ou imagem)
+                </div>
+                <input ref={fileInputRef} type="file" accept="application/pdf,image/*" multiple hidden onChange={handleFilesSelected} />
+                {attachments.length > 0 && (
+                  <div className="attachment-list">
+                    {attachments.map((a) => (
+                      <div className="attachment-item" key={a.id}>
+                        <Icon name="file" size={15} />
+                        <span className="name">{a.name}</span>
+                        <span className="cell-muted" style={{ fontSize: 11.5 }}>{(a.size / 1024).toFixed(0)} KB</span>
+                        <button onClick={() => removeAttachment(a.id)} aria-label={`Remover ${a.name}`}>
+                          <Icon name="close" size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="cell-muted" style={{ fontSize: 12, marginTop: 10, marginBottom: 0 }}>
+                  Anexos ficam salvos apenas nesta sessão (recurso de demonstração).
+                </p>
+              </div>
+            )}
+
+            {error && <div className="alert alert-error"><Icon name="alertTriangle" size={16} />{error}</div>}
+
+            {loading ? (
+              <CardSkeleton lines={4} />
+            ) : registrosFiltrados.length === 0 ? (
+              <div className="card">
+                <div className="empty-state">
+                  <Icon name="records" size={40} className="empty-icon" />
+                  <strong>Nada por aqui ainda</strong>
+                  <span>{busca ? 'Nenhum registro corresponde à busca.' : 'Nenhum registro de prontuário para este paciente ainda.'}</span>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {registrosFiltrados.map((r) => (
+                  <div key={r.id} className="card card-pad">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, alignItems: 'center' }}>
+                      <strong>{formatDateTime(r.dataRegistro)}</strong>
+                      {r.medicoNome && <span className="badge badge-blue">Dr(a). {r.medicoNome}</span>}
+                    </div>
+                    {tab === 'anamnese' && (
+                      <>
+                        <Field label="Queixa principal" value={r.queixaPrincipal} />
+                        <Field label="Histórico" value={r.historico} />
+                        <Field label="Exame físico" value={r.exameFisico} />
+                        <Field label="Diagnóstico" value={r.diagnostico} />
+                        <Field label="Observações" value={r.observacoes} />
+                        {!r.queixaPrincipal && !r.historico && !r.exameFisico && !r.diagnostico && !r.observacoes && (
+                          <p className="cell-muted" style={{ margin: 0 }}>Sem dados de anamnese neste registro.</p>
+                        )}
+                      </>
+                    )}
+                    {tab === 'exames' && (
+                      r.examesSolicitados
+                        ? <Field label="Exames solicitados" value={r.examesSolicitados} />
+                        : <p className="cell-muted" style={{ margin: 0 }}>Nenhum exame solicitado neste registro.</p>
+                    )}
+                    {tab === 'prescricoes' && (
+                      r.prescricao
+                        ? <Field label="Prescrição" value={r.prescricao} />
+                        : <p className="cell-muted" style={{ margin: 0 }}>Nenhuma prescrição neste registro.</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </div>
 
       {modalOpen && (
         <Modal

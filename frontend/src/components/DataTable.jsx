@@ -17,6 +17,7 @@ export default function DataTable({
   emptyIcon = 'info',
   emptyTitle = 'Nada por aqui ainda',
   emptyMessage = 'Nenhum registro encontrado.',
+  emptyAction = null,
 }) {
   const [sortKey, setSortKey] = useState(null)
   const [sortDir, setSortDir] = useState('asc')
@@ -61,9 +62,10 @@ export default function DataTable({
   if (!rows || rows.length === 0) {
     return (
       <div className="empty-state">
-        <Icon name={emptyIcon} size={32} className="empty-icon" />
+        <Icon name={emptyIcon} size={40} className="empty-icon" />
         <strong>{emptyTitle}</strong>
         <span>{emptyMessage}</span>
+        {emptyAction && <div style={{ marginTop: 20 }}>{emptyAction}</div>}
       </div>
     )
   }
