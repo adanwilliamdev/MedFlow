@@ -22,7 +22,7 @@ O MedFlow foi desenvolvido para consolidar e demonstrar conhecimentos práticos 
 * Desenvolvimento de interfaces com React
 * Gerenciamento de estado global com Zustand
 * Docker e Docker Compose
-* Boas práticas de segurança, performance e organização de código
+* Boas práticas de segurança, performance e organização de código.
 
 ---
 

@@ -1,8 +1,0 @@
-{
-  "build": {
-    "builder": "NIXPACKS"
-  },
-  "deploy": {
-    "startCommand": "java -Dspring.profiles.active=prod -jar app.jar"
-  }
-}
