@@ -3,6 +3,6 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "java -jar backend/target/*.jar"
+    "startCommand": "java -Dspring.profiles.active=prod -jar app.jar"
   }
 }
