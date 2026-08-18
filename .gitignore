@@ -1,10 +1,15 @@
-# Backend (Maven)
+# Backend - Maven
 backend/target/
 
-# Frontend (Node/Vite)
-frontend-web/node_modules/
-frontend-web/dist/
-frontend-web/.vite/
+# Frontend - Node/Vite
+node_modules/
+dist/
+.vite/
+
+# Environment
+.env
+.env.*
+!.env.example
 
 # IDE
 .idea/
@@ -13,3 +18,4 @@ frontend-web/.vite/
 
 # OS
 .DS_Store
+Thumbs.db
